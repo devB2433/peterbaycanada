@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.chatshuttle.ai)",
+      "Bash(ls:*)",
+      "Bash(rm:*)"
+    ]
+  }
+}
