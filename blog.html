@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章 - Bay Tools</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669',
+                        secondary: '#6366f1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 自定义样式 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-900">
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img src="pbc_logo.png" alt="Bay Tools" class="h-10">
+                        <span class="text-xl font-bold gradient-text">Bay Tools</span>
+                    </a>
+                </div>
+
+                <!-- 桌面端导航 -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <!-- 语言切换按钮 -->
+                    <button id="lang-toggle" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                        </svg>
+                        <span id="lang-text">EN</span>
+                    </button>
+
+                    <a href="index.html" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="首页" data-lang-en="Home">首页</a>
+
+                    <!-- Product 下拉菜单 -->
+                    <div class="relative">
+                        <button id="desktop-product-btn" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium flex items-center gap-1">
+                            <span data-lang-zh="产品" data-lang-en="Products">产品</span>
+                            <svg class="w-4 h-4 transition-transform" id="desktop-product-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="desktop-product-menu" class="hidden absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-stone-200 py-1 z-50">
+                            <a href="product-1.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="次卡计数器" data-lang-en="Punch Card Counter">次卡计数器</div>
+                            </a>
+                            <a href="product-2.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="拾遗" data-lang-en="Shiyi">拾遗</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="脑外U盘" data-lang-en="External Brain">脑外U盘</div>
+                            </a>
+                            <a href="product-3.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="AskMe" data-lang-en="AskMe">AskMe</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="个人知识库" data-lang-en="Knowledge Base">个人知识库</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="blog.html" class="text-emerald-600 hover:text-emerald-700 transition-colors text-sm font-medium" data-lang-zh="文章" data-lang-en="Blog">文章</a>
+                    <a href="index.html#about" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="关于" data-lang-en="About">关于</a>
+                    <a href="index.html#contact" class="bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 transition-all text-sm font-semibold" data-lang-zh="联系" data-lang-en="Contact">联系</a>
+                </div>
+
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-stone-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-stone-200 bg-white">
+            <div class="px-4 py-4 space-y-3">
+                <button id="mobile-lang-toggle" class="w-full text-left text-stone-600 font-medium flex items-center gap-2 py-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                    </svg>
+                    <span id="mobile-lang-text">EN</span>
+                </button>
+
+                <a href="index.html" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="首页" data-lang-en="Home">首页</a>
+
+                <div>
+                    <button id="mobile-product-btn" class="w-full text-left text-stone-600 font-medium flex items-center justify-between py-2">
+                        <span data-lang-zh="产品" data-lang-en="Products">产品</span>
+                        <svg class="w-4 h-4 transition-transform" id="mobile-product-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="mobile-product-menu" class="hidden pl-4 space-y-2 mt-2">
+                        <a href="product-1.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</a>
+                        <a href="product-2.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="拾遗" data-lang-en="Shiyi">拾遗</a>
+                        <a href="product-3.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="AskMe" data-lang-en="AskMe">AskMe</a>
+                    </div>
+                </div>
+                <a href="blog.html" class="block text-emerald-600 hover:text-emerald-700 transition-colors font-medium py-2" data-lang-zh="文章" data-lang-en="Blog">文章</a>
+                <a href="index.html#about" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="关于" data-lang-en="About">关于</a>
+                <a href="index.html#contact" class="block bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors text-center font-semibold" data-lang-zh="联系" data-lang-en="Contact">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 文章列表区 -->
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- 页面标题 -->
+            <div class="mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4" data-lang-zh="文章" data-lang-en="Blog">文章</h1>
+                <p class="text-stone-600" data-lang-zh="分享关于产品开发、隐私保护和技术思考的文章" data-lang-en="Sharing articles about product development, privacy protection and technical thoughts">分享关于产品开发、隐私保护和技术思考的文章</p>
+            </div>
+
+            <!-- 文章列表 -->
+            <div class="space-y-0">
+                <!-- 文章 1 -->
+                <article class="border-b border-stone-200 py-8 hover:bg-stone-50 transition-colors px-4 -mx-4">
+                    <div class="flex items-center gap-3 text-sm text-stone-500 mb-3">
+                        <time datetime="2026-03-01">2026-03-01</time>
+                        <span>•</span>
+                        <span data-lang-zh="5 分钟阅读" data-lang-en="5 min read">5 分钟阅读</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-3 hover:text-emerald-600 transition-colors">
+                        <a href="#" data-lang-zh="为什么我选择本地优先的应用架构" data-lang-en="Why I Choose Local-First Application Architecture">为什么我选择本地优先的应用架构</a>
+                    </h2>
+                    <p class="text-stone-600 mb-4" data-lang-zh="在云服务盛行的今天，本地优先的架构似乎有些反潮流。但我相信，真正尊重用户的应用应该让用户完全掌控自己的数据..." data-lang-en="In today's cloud-dominated era, local-first architecture seems counter-intuitive. But I believe applications that truly respect users should give them complete control over their data...">在云服务盛行的今天，本地优先的架构似乎有些反潮流。但我相信，真正尊重用户的应用应该让用户完全掌控自己的数据...</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="隐私保护" data-lang-en="Privacy">隐私保护</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="架构设计" data-lang-en="Architecture">架构设计</span>
+                    </div>
+                </article>
+
+                <!-- 文章 2 -->
+                <article class="border-b border-stone-200 py-8 hover:bg-stone-50 transition-colors px-4 -mx-4">
+                    <div class="flex items-center gap-3 text-sm text-stone-500 mb-3">
+                        <time datetime="2026-02-28">2026-02-28</time>
+                        <span>•</span>
+                        <span data-lang-zh="8 分钟阅读" data-lang-en="8 min read">8 分钟阅读</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-3 hover:text-emerald-600 transition-colors">
+                        <a href="#" data-lang-zh="SwipeOff 开发日志：从想法到上线" data-lang-en="SwipeOff Development Log: From Idea to Launch">SwipeOff 开发日志：从想法到上线</a>
+                    </h2>
+                    <p class="text-stone-600 mb-4" data-lang-zh="SwipeOff 是我的第一个独立应用，它源于一个简单的需求：记录健身房次卡的剩余次数。这篇文章记录了从想法诞生到产品上线的全过程..." data-lang-en="SwipeOff is my first independent app, born from a simple need: tracking remaining sessions on gym punch cards. This article documents the entire journey from idea to launch...">SwipeOff 是我的第一个独立应用，它源于一个简单的需求：记录健身房次卡的剩余次数。这篇文章记录了从想法诞生到产品上线的全过程...</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="产品开发" data-lang-en="Development">产品开发</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium">SwipeOff</span>
+                    </div>
+                </article>
+
+                <!-- 文章 3 -->
+                <article class="border-b border-stone-200 py-8 hover:bg-stone-50 transition-colors px-4 -mx-4">
+                    <div class="flex items-center gap-3 text-sm text-stone-500 mb-3">
+                        <time datetime="2026-02-25">2026-02-25</time>
+                        <span>•</span>
+                        <span data-lang-zh="6 分钟阅读" data-lang-en="6 min read">6 分钟阅读</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-3 hover:text-emerald-600 transition-colors">
+                        <a href="#" data-lang-zh="端到端加密的实现原理" data-lang-en="How End-to-End Encryption Works">端到端加密的实现原理</a>
+                    </h2>
+                    <p class="text-stone-600 mb-4" data-lang-zh="作为一名信息安全工程师，我想用最简单的语言解释端到端加密是如何保护你的数据的，以及为什么它如此重要..." data-lang-en="As an information security engineer, I want to explain in simple terms how end-to-end encryption protects your data and why it's so important...">作为一名信息安全工程师，我想用最简单的语言解释端到端加密是如何保护你的数据的，以及为什么它如此重要...</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="信息安全" data-lang-en="Security">信息安全</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="加密技术" data-lang-en="Encryption">加密技术</span>
+                    </div>
+                </article>
+
+                <!-- 文章 4 -->
+                <article class="border-b border-stone-200 py-8 hover:bg-stone-50 transition-colors px-4 -mx-4">
+                    <div class="flex items-center gap-3 text-sm text-stone-500 mb-3">
+                        <time datetime="2026-02-20">2026-02-20</time>
+                        <span>•</span>
+                        <span data-lang-zh="10 分钟阅读" data-lang-en="10 min read">10 分钟阅读</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-3 hover:text-emerald-600 transition-colors">
+                        <a href="#" data-lang-zh="拾遗：打造你的第二大脑" data-lang-en="Shiyi: Building Your Second Brain">拾遗：打造你的第二大脑</a>
+                    </h2>
+                    <p class="text-stone-600 mb-4" data-lang-zh="信息爆炸的时代，我们每天接触大量碎片化信息。拾遗的设计理念是帮助你捕获、整理和检索这些信息，让它们真正为你所用..." data-lang-en="In the age of information overload, we encounter massive amounts of fragmented information daily. Shiyi is designed to help you capture, organize and retrieve this information effectively...">信息爆炸的时代，我们每天接触大量碎片化信息。拾遗的设计理念是帮助你捕获、整理和检索这些信息，让它们真正为你所用...</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="知识管理" data-lang-en="Knowledge">知识管理</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="拾遗" data-lang-en="Shiyi">拾遗</span>
+                    </div>
+                </article>
+
+                <!-- 文章 5 -->
+                <article class="border-b border-stone-200 py-8 hover:bg-stone-50 transition-colors px-4 -mx-4">
+                    <div class="flex items-center gap-3 text-sm text-stone-500 mb-3">
+                        <time datetime="2026-02-15">2026-02-15</time>
+                        <span>•</span>
+                        <span data-lang-zh="7 分钟阅读" data-lang-en="7 min read">7 分钟阅读</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-3 hover:text-emerald-600 transition-colors">
+                        <a href="#" data-lang-zh="开源 AskMe：一键部署的个人知识库" data-lang-en="Open Source AskMe: One-Click Personal Knowledge Base">开源 AskMe：一键部署的个人知识库</a>
+                    </h2>
+                    <p class="text-stone-600 mb-4" data-lang-zh="AskMe 是一个完全开源的个人知识库项目，支持一键部署。这篇文章介绍了它的技术架构、核心功能，以及为什么我选择开源..." data-lang-en="AskMe is a fully open-source personal knowledge base project with one-click deployment. This article covers its technical architecture, core features, and why I chose to open source it...">AskMe 是一个完全开源的个人知识库项目，支持一键部署。这篇文章介绍了它的技术架构、核心功能，以及为什么我选择开源...</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="开源项目" data-lang-en="Open Source">开源项目</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium">AskMe</span>
+                    </div>
+                </article>
+
+                <!-- 文章 6 -->
+                <article class="py-8 hover:bg-stone-50 transition-colors px-4 -mx-4">
+                    <div class="flex items-center gap-3 text-sm text-stone-500 mb-3">
+                        <time datetime="2026-02-10">2026-02-10</time>
+                        <span>•</span>
+                        <span data-lang-zh="12 分钟阅读" data-lang-en="12 min read">12 分钟阅读</span>
+                    </div>
+                    <h2 class="text-xl font-bold mb-3 hover:text-emerald-600 transition-colors">
+                        <a href="#" data-lang-zh="独立开发者的隐私保护实践指南" data-lang-en="Privacy Protection Guide for Independent Developers">独立开发者的隐私保护实践指南</a>
+                    </h2>
+                    <p class="text-stone-600 mb-4" data-lang-zh="作为独立开发者，如何在产品中实现真正的隐私保护？这篇文章分享了我的实践经验，包括数据最小化、加密存储、匿名化处理等..." data-lang-en="As an independent developer, how do you implement real privacy protection in your products? This article shares my practical experience, including data minimization, encrypted storage, anonymization...">作为独立开发者，如何在产品中实现真正的隐私保护？这篇文章分享了我的实践经验，包括数据最小化、加密存储、匿名化处理等...</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="隐私保护" data-lang-en="Privacy">隐私保护</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-medium" data-lang-zh="最佳实践" data-lang-en="Best Practices">最佳实践</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-stone-950 text-stone-400 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">Bay Tools</h3>
+                    <p class="text-sm" data-lang-zh="创新应用开发者" data-lang-en="Innovative App Developer">创新应用开发者</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="产品" data-lang-en="Products">产品</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html#apps" class="hover:text-white transition-colors" data-lang-zh="所有产品" data-lang-en="All Products">所有产品</a></li>
+                        <li><a href="product-1.html" class="hover:text-white transition-colors">SwipeOff</a></li>
+                        <li><a href="product-2.html" class="hover:text-white transition-colors" data-lang-zh="拾遗" data-lang-en="Shiyi">拾遗</a></li>
+                        <li><a href="product-3.html" class="hover:text-white transition-colors">AskMe</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="资源" data-lang-en="Resources">资源</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="blog.html" class="hover:text-white transition-colors" data-lang-zh="博客" data-lang-en="Blog">博客</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors" data-lang-zh="文档" data-lang-en="Documentation">文档</a></li>
+                        <li><a href="index.html#privacy" class="hover:text-white transition-colors" data-lang-zh="隐私政策" data-lang-en="Privacy Policy">隐私政策</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="联系" data-lang-en="Contact">联系</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html#contact" class="hover:text-white transition-colors" data-lang-zh="联系我们" data-lang-en="Contact Us">联系我们</a></li>
+                        <li><a href="index.html#about" class="hover:text-white transition-colors" data-lang-zh="关于我" data-lang-en="About Me">关于我</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-stone-800 pt-8 text-center text-sm">
+                <p>&copy; 2026 Bay Tools. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 语言切换功能
+        let currentLang = localStorage.getItem('language') || 'zh';
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+
+            document.querySelectorAll('[data-lang-zh]').forEach(element => {
+                if (lang === 'zh') {
+                    element.textContent = element.getAttribute('data-lang-zh');
+                } else {
+                    element.textContent = element.getAttribute('data-lang-en');
+                }
+            });
+
+            document.getElementById('lang-text').textContent = lang === 'zh' ? 'EN' : '中文';
+            document.getElementById('mobile-lang-text').textContent = lang === 'zh' ? 'EN' : '中文';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            switchLanguage(currentLang);
+        });
+
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            switchLanguage(currentLang === 'zh' ? 'en' : 'zh');
+        });
+
+        document.getElementById('mobile-lang-toggle').addEventListener('click', () => {
+            switchLanguage(currentLang === 'zh' ? 'en' : 'zh');
+        });
+
+        // 桌面端 Product 下拉菜单
+        const desktopProductBtn = document.getElementById('desktop-product-btn');
+        const desktopProductMenu = document.getElementById('desktop-product-menu');
+        const desktopProductIcon = document.getElementById('desktop-product-icon');
+
+        desktopProductBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            desktopProductMenu.classList.toggle('hidden');
+            desktopProductIcon.classList.toggle('rotate-180');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!desktopProductBtn.contains(e.target) && !desktopProductMenu.contains(e.target)) {
+                desktopProductMenu.classList.add('hidden');
+                desktopProductIcon.classList.remove('rotate-180');
+            }
+        });
+
+        // 移动端主菜单切换
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 移动端 Product 子菜单切换
+        const mobileProductBtn = document.getElementById('mobile-product-btn');
+        const mobileProductMenu = document.getElementById('mobile-product-menu');
+        const mobileProductIcon = document.getElementById('mobile-product-icon');
+
+        mobileProductBtn.addEventListener('click', () => {
+            mobileProductMenu.classList.toggle('hidden');
+            mobileProductIcon.classList.toggle('rotate-180');
+        });
+
+        // 点击菜单链接后关闭移动端菜单
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    </script>
+
+</body>
+</html>

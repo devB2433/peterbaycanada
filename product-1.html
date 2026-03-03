@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-zh="SwipeOff - Bay Tools" data-lang-en="SwipeOff - Bay Tools">SwipeOff - Bay Tools</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config - ChatShuttle 风格配色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669',   // 翡翠绿 700 - 更深的绿色
+                        secondary: '#6366f1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 自定义样式 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* 下拉菜单动画 */
+        .dropdown-menu {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s, transform 0.2s;
+            pointer-events: none;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-900">
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img src="pbc_logo.png" alt="Bay Tools" class="h-10">
+                        <span class="text-xl font-bold gradient-text">Bay Tools</span>
+                    </a>
+                </div>
+
+                <!-- 桌面端导航 -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <!-- 语言切换按钮 -->
+                    <button id="lang-toggle" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                        </svg>
+                        <span id="lang-text">EN</span>
+                    </button>
+
+                    <a href="index.html#home" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="首页" data-lang-en="Home">首页</a>
+
+                    <!-- Product 下拉菜单 -->
+                    <div class="relative">
+                        <button id="desktop-product-btn" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium flex items-center gap-1">
+                            <span data-lang-zh="产品" data-lang-en="Products">产品</span>
+                            <svg class="w-4 h-4 transition-transform" id="desktop-product-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="desktop-product-menu" class="hidden absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-stone-200 py-1 z-50">
+                            <a href="product-1.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="次卡计数器" data-lang-en="Punch Card Counter">次卡计数器</div>
+                            </a>
+                            <a href="product-2.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="产品名称 2" data-lang-en="Product Name 2">产品名称 2</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="简短描述" data-lang-en="Brief description">简短描述</div>
+                            </a>
+                            <a href="product-3.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="产品名称 3" data-lang-en="Product Name 3">产品名称 3</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="简短描述" data-lang-en="Brief description">简短描述</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="index.html#blog" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="博客" data-lang-en="Blog">博客</a>
+                    <a href="index.html#about" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="关于" data-lang-en="About">关于</a>
+                    <a href="index.html#contact" class="bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 transition-all text-sm font-semibold" data-lang-zh="联系" data-lang-en="Contact">联系</a>
+                </div>
+
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-stone-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-stone-200 bg-white">
+            <div class="px-4 py-4 space-y-3">
+                <button id="mobile-lang-toggle" class="w-full text-left text-stone-600 font-medium flex items-center gap-2 py-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                    </svg>
+                    <span id="mobile-lang-text">EN</span>
+                </button>
+                <a href="index.html#home" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="首页" data-lang-en="Home">首页</a>
+                <div>
+                    <button id="mobile-product-btn" class="w-full text-left text-stone-600 font-medium flex items-center justify-between py-2">
+                        <span data-lang-zh="产品" data-lang-en="Products">产品</span>
+                        <svg class="w-4 h-4 transition-transform" id="mobile-product-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="mobile-product-menu" class="hidden pl-4 space-y-2 mt-2">
+                        <a href="product-1.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</a>
+                        <a href="product-2.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="产品名称 2" data-lang-en="Product Name 2">产品名称 2</a>
+                        <a href="product-3.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="产品名称 3" data-lang-en="Product Name 3">产品名称 3</a>
+                    </div>
+                </div>
+                <a href="index.html#blog" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="博客" data-lang-en="Blog">博客</a>
+                <a href="index.html#about" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="关于" data-lang-en="About">关于</a>
+                <a href="index.html#contact" class="block bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors text-center font-semibold" data-lang-zh="联系" data-lang-en="Contact">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 产品 Hero 区 -->
+    <section class="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- 左侧：产品信息 -->
+                <div>
+                    <!-- 标签 -->
+                    <div class="inline-flex items-center gap-2 mb-6">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-sm font-medium" data-lang-zh="生活工具" data-lang-en="Lifestyle">生活工具</span>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium" data-lang-zh="免费" data-lang-en="Free">免费</span>
+                    </div>
+
+                    <!-- 产品名称 -->
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</h1>
+
+                    <!-- 产品描述 -->
+                    <p class="text-xl text-stone-600 mb-8" data-lang-zh="一个免费的次卡计数器，永远记得还剩几次、还有多久。帮你管理健身卡、美容卡、课程卡等各种次卡，再也不用担心忘记使用期限。" data-lang-en="A free punch card counter that never forgets how many sessions left and how much time remains. Manage gym cards, beauty cards, course cards and more, never worry about expiration dates again.">
+                        一个免费的次卡计数器，永远记得还剩几次、还有多久。帮你管理健身卡、美容卡、课程卡等各种次卡，再也不用担心忘记使用期限。
+                    </p>
+
+                    <!-- CTA 按钮 -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#" class="bg-stone-900 text-white px-8 py-4 rounded-xl hover:bg-stone-800 transition-all hover:-translate-y-1 hover:shadow-2xl font-semibold text-center">
+                            <span data-lang-zh="立即下载" data-lang-en="Download Now">立即下载</span>
+                        </a>
+                        <a href="#" class="border-2 border-stone-300 text-stone-900 px-8 py-4 rounded-xl hover:border-stone-400 hover:bg-stone-100 transition-all font-semibold text-center">
+                            <span data-lang-zh="查看文档" data-lang-en="View Docs">查看文档</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 右侧：产品图片 -->
+                <div>
+                    <div class="rounded-2xl shadow-2xl overflow-hidden bg-gradient-to-br from-stone-200 to-stone-300 aspect-square flex items-center justify-center">
+                        <p class="text-stone-600 text-2xl font-semibold" data-lang-zh="产品图标/截图" data-lang-en="Product Icon/Screenshot">产品图标/截图</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能特性区 -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center" data-lang-zh="核心功能" data-lang-en="Key Features">核心功能</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- 功能 1 -->
+                <div class="p-6 rounded-xl border border-stone-200 hover:border-emerald-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" data-lang-zh="功能特性 1" data-lang-en="Feature 1">功能特性 1</h3>
+                    <p class="text-stone-600" data-lang-zh="描述这个功能的具体作用和优势" data-lang-en="Describe the specific role and advantages of this feature">描述这个功能的具体作用和优势</p>
+                </div>
+
+                <!-- 功能 2 -->
+                <div class="p-6 rounded-xl border border-stone-200 hover:border-emerald-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 bg-stone-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" data-lang-zh="功能特性 2" data-lang-en="Feature 2">功能特性 2</h3>
+                    <p class="text-stone-600" data-lang-zh="描述这个功能的具体作用和优势" data-lang-en="Describe the specific role and advantages of this feature">描述这个功能的具体作用和优势</p>
+                </div>
+
+                <!-- 功能 3 -->
+                <div class="p-6 rounded-xl border border-stone-200 hover:border-emerald-300 hover:shadow-lg transition-all">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" data-lang-zh="功能特性 3" data-lang-en="Feature 3">功能特性 3</h3>
+                    <p class="text-stone-600" data-lang-zh="描述这个功能的具体作用和优势" data-lang-en="Describe the specific role and advantages of this feature">描述这个功能的具体作用和优势</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 截图展示区 -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-stone-50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-12 text-center" data-lang-zh="产品截图" data-lang-en="Screenshots">产品截图</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- 截图 1 -->
+                <div class="rounded-xl overflow-hidden shadow-lg">
+                    <div class="bg-gradient-to-br from-stone-200 to-stone-300 aspect-video flex items-center justify-center">
+                        <p class="text-stone-600 text-xl font-semibold" data-lang-zh="截图 1" data-lang-en="Screenshot 1">截图 1</p>
+                    </div>
+                </div>
+
+                <!-- 截图 2 -->
+                <div class="rounded-xl overflow-hidden shadow-lg">
+                    <div class="bg-gradient-to-br from-stone-200 to-stone-300 aspect-video flex items-center justify-center">
+                        <p class="text-stone-600 text-xl font-semibold" data-lang-zh="截图 2" data-lang-en="Screenshot 2">截图 2</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA 区 -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-stone-900 text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-6" data-lang-zh="准备好开始了吗？" data-lang-en="Ready to Get Started?">准备好开始了吗？</h2>
+            <p class="text-xl text-stone-300 mb-8" data-lang-zh="立即下载，体验强大功能" data-lang-en="Download now and experience powerful features">立即下载，体验强大功能</p>
+            <a href="#" class="inline-block bg-emerald-600 text-white px-10 py-4 rounded-xl hover:bg-emerald-700 transition-all hover:-translate-y-1 hover:shadow-2xl font-semibold text-lg">
+                <span data-lang-zh="免费下载" data-lang-en="Free Download">免费下载</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-stone-950 text-stone-400 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">Bay Tools</h3>
+                    <p class="text-sm" data-lang-zh="创新应用开发者" data-lang-en="Innovative App Developer">创新应用开发者</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="产品" data-lang-en="Products">产品</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html#apps" class="hover:text-white transition-colors" data-lang-zh="所有产品" data-lang-en="All Products">所有产品</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="资源" data-lang-en="Resources">资源</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors" data-lang-zh="文档" data-lang-en="Documentation">文档</a></li>
+                        <li><a href="index.html#blog" class="hover:text-white transition-colors" data-lang-zh="博客" data-lang-en="Blog">博客</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="联系" data-lang-en="Contact">联系</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="index.html#contact" class="hover:text-white transition-colors" data-lang-zh="联系我们" data-lang-en="Contact Us">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-stone-800 pt-8 text-center text-sm">
+                <p>&copy; 2026 Bay Tools. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 语言切换功能
+        let currentLang = localStorage.getItem('language') || 'zh';
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+
+            document.querySelectorAll('[data-lang-zh]').forEach(element => {
+                if (lang === 'zh') {
+                    element.textContent = element.getAttribute('data-lang-zh');
+                } else {
+                    element.textContent = element.getAttribute('data-lang-en');
+                }
+            });
+
+            document.getElementById('lang-text').textContent = lang === 'zh' ? 'EN' : '中文';
+            document.getElementById('mobile-lang-text').textContent = lang === 'zh' ? 'EN' : '中文';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            switchLanguage(currentLang);
+        });
+
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            switchLanguage(currentLang === 'zh' ? 'en' : 'zh');
+        });
+
+        document.getElementById('mobile-lang-toggle').addEventListener('click', () => {
+            switchLanguage(currentLang === 'zh' ? 'en' : 'zh');
+        });
+
+        // 桌面端 Product 下拉菜单
+        const desktopProductBtn = document.getElementById('desktop-product-btn');
+        const desktopProductMenu = document.getElementById('desktop-product-menu');
+        const desktopProductIcon = document.getElementById('desktop-product-icon');
+
+        desktopProductBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            desktopProductMenu.classList.toggle('hidden');
+            desktopProductIcon.classList.toggle('rotate-180');
+        });
+
+        // 点击页面其他地方关闭桌面端下拉菜单
+        document.addEventListener('click', (e) => {
+            if (!desktopProductBtn.contains(e.target) && !desktopProductMenu.contains(e.target)) {
+                desktopProductMenu.classList.add('hidden');
+                desktopProductIcon.classList.remove('rotate-180');
+            }
+        });
+
+        // 移动端菜单
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        const mobileProductBtn = document.getElementById('mobile-product-btn');
+        const mobileProductMenu = document.getElementById('mobile-product-menu');
+        const mobileProductIcon = document.getElementById('mobile-product-icon');
+
+        mobileProductBtn.addEventListener('click', () => {
+            mobileProductMenu.classList.toggle('hidden');
+            mobileProductIcon.classList.toggle('rotate-180');
+        });
+
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bay Tools</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Config - ChatShuttle 风格配色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669',   // 翡翠绿 700 - 更深的绿色
+                        secondary: '#6366f1',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 自定义样式 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Long+Cang&display=swap');
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #fafaf9;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(5, 150, 105, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(5, 150, 105, 0.02) 0%, transparent 50%),
+                radial-gradient(circle, rgba(120, 113, 108, 0.15) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 20px 20px;
+            background-position: 0 0, 0 0, 0 0;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* 下拉菜单动画 */
+        .dropdown-menu {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s, transform 0.2s;
+            pointer-events: none;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* 节点连线背景效果 */
+        .tech-pattern {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(5, 150, 105, 0.08) 2px, transparent 2px),
+                radial-gradient(circle at 85% 30%, rgba(5, 150, 105, 0.06) 2px, transparent 2px),
+                radial-gradient(circle at 45% 70%, rgba(5, 150, 105, 0.05) 2px, transparent 2px),
+                radial-gradient(circle at 75% 85%, rgba(5, 150, 105, 0.07) 2px, transparent 2px);
+            background-size: 100% 100%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* 语言切换开关样式 */
+        .lang-switch {
+            position: relative;
+            display: inline-flex;
+            background-color: #f5f5f4;
+            border-radius: 26px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .lang-switch input {
+            display: none;
+        }
+
+        .lang-option {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #78716c;
+            user-select: none;
+        }
+
+        .lang-option.active {
+            background-color: #059669;
+            color: white;
+        }
+
+        .lang-option:hover:not(.active) {
+            color: #059669;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-900">
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img src="pbc_logo_green.png" alt="Bay Tools" class="h-10">
+                        <span class="text-xl font-bold text-stone-900">Bay Tools</span>
+                    </a>
+                </div>
+
+                <!-- 桌面端导航 -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <!-- 语言切换开关 -->
+                    <div class="lang-switch">
+                        <span class="lang-option" id="lang-zh" onclick="switchLanguage('zh')">中</span>
+                        <span class="lang-option" id="lang-en" onclick="switchLanguage('en')">EN</span>
+                    </div>
+
+                    <a href="#home" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="首页" data-lang-en="Home">首页</a>
+
+                    <!-- Product 下拉菜单 -->
+                    <div class="relative">
+                        <button id="desktop-product-btn" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium flex items-center gap-1">
+                            <span data-lang-zh="产品" data-lang-en="Products">产品</span>
+                            <svg class="w-4 h-4 transition-transform" id="desktop-product-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <!-- 下拉菜单 -->
+                        <div id="desktop-product-menu" class="hidden absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-stone-200 py-1 z-50">
+                            <a href="product-1.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="次卡计数器" data-lang-en="Punch Card Counter">次卡计数器</div>
+                            </a>
+                            <a href="product-2.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="拾遗" data-lang-en="Shiyi">拾遗</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="脑外U盘" data-lang-en="External Brain">脑外U盘</div>
+                            </a>
+                            <a href="product-3.html" class="block px-4 py-2 text-stone-700 hover:bg-stone-50 hover:text-emerald-600 transition-colors">
+                                <div class="text-sm font-semibold" data-lang-zh="AskMe" data-lang-en="AskMe">AskMe</div>
+                                <div class="text-xs text-stone-500" data-lang-zh="个人知识库" data-lang-en="Knowledge Base">个人知识库</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <a href="blog.html" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="文章" data-lang-en="Blog">文章</a>
+                    <a href="#about" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="关于" data-lang-en="About">关于</a>
+                    <a href="#contact" class="bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 transition-all text-sm font-semibold" data-lang-zh="联系" data-lang-en="Contact">联系</a>
+                </div>
+
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-stone-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-stone-200 bg-white">
+            <div class="px-4 py-4 space-y-3">
+                <!-- 移动端语言切换开关 -->
+                <div class="flex items-center justify-between py-2">
+                    <span class="text-stone-600 font-medium" data-lang-zh="语言" data-lang-en="Language">语言</span>
+                    <div class="lang-switch">
+                        <span class="lang-option" id="mobile-lang-zh" onclick="switchLanguage('zh')">中</span>
+                        <span class="lang-option" id="mobile-lang-en" onclick="switchLanguage('en')">EN</span>
+                    </div>
+                </div>
+
+                <a href="#home" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="首页" data-lang-en="Home">首页</a>
+
+                <!-- 移动端 Product 菜单 -->
+                <div>
+                    <button id="mobile-product-btn" class="w-full text-left text-stone-600 font-medium flex items-center justify-between py-2">
+                        <span data-lang-zh="产品" data-lang-en="Products">产品</span>
+                        <svg class="w-4 h-4 transition-transform" id="mobile-product-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="mobile-product-menu" class="hidden pl-4 space-y-2 mt-2">
+                        <a href="product-1.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</a>
+                        <a href="product-2.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="拾遗" data-lang-en="Shiyi">拾遗</a>
+                        <a href="product-3.html" class="block text-stone-600 hover:text-emerald-600 py-2" data-lang-zh="AskMe" data-lang-en="AskMe">AskMe</a>
+                    </div>
+                </div>
+                <a href="blog.html" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="文章" data-lang-en="Blog">文章</a>
+                <a href="#about" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="关于" data-lang-en="About">关于</a>
+                <a href="#contact" class="block bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors text-center font-semibold" data-lang-zh="联系" data-lang-en="Contact">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero 区 - 理念介绍 -->
+    <section id="home" class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 tech-pattern">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center">
+                <!-- 主标题 -->
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-20 leading-tight">
+                    <span data-lang-zh="与其防备未来，不如与 AI " data-lang-en="Rather than guarding against the future, embrace AI ">与其防备未来，不如与 AI </span>
+                    <span class="gradient-text" data-lang-zh="并肩而行" data-lang-en="and move forward together">并肩而行</span>
+                </h1>
+
+                <!-- 副标题 - 排比句 -->
+                <div class="text-lg sm:text-xl text-stone-600 mb-16 max-w-5xl mx-auto space-y-8 leading-relaxed py-8">
+                    <blockquote class="text-left pl-0 sm:pl-8 relative italic text-stone-700">
+                        <span class="text-6xl text-emerald-500 opacity-40 absolute -left-8 -top-2">"</span>
+                        <span data-lang-zh="我相信AI应该服务于人，而不是相反。" data-lang-en="I believe AI should serve people, not the other way around.">我相信AI应该服务于人，而不是相反。</span>
+                    </blockquote>
+                    <blockquote class="text-center relative italic text-stone-700">
+                        <span data-lang-zh="我相信AI应该造福于人，为社会创造价值，而不是抢夺工作岗位。" data-lang-en="I believe AI should benefit humanity and create value for society, not replace jobs.">我相信AI应该造福于人，为社会创造价值，而不是抢夺工作岗位。</span>
+                    </blockquote>
+                    <blockquote class="text-right pr-0 sm:pr-8 relative italic text-stone-700">
+                        <span class="text-6xl text-emerald-500 opacity-40 absolute -right-8 -top-2">"</span>
+                        <span data-lang-zh="每个应用都应该尊重用户的隐私，提供真正的价值。" data-lang-en="Every application should respect user privacy and provide real value.">每个应用都应该尊重用户的隐私，提供真正的价值。</span>
+                    </blockquote>
+                </div>
+
+                <!-- 价值主张 -->
+                <div class="mb-12">
+                    <p class="text-2xl sm:text-3xl font-bold text-emerald-600 mb-8" data-lang-zh="简单、安全、实用 —— 这是我的承诺" data-lang-en="Simple, Secure, Practical — That's My Promise">
+                        简单、安全、实用 —— 这是我的承诺
+                    </p>
+                </div>
+
+                <!-- CTA 按钮 -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="#apps" class="bg-stone-900 text-white px-8 py-4 rounded-xl hover:bg-stone-800 transition-all hover:-translate-y-1 hover:shadow-2xl font-semibold text-lg w-full sm:w-auto active:scale-[0.98]">
+                        <span data-lang-zh="探索产品" data-lang-en="Explore Products">探索产品</span>
+                    </a>
+                    <a href="#privacy" class="border-2 border-stone-300 text-stone-900 px-8 py-4 rounded-xl hover:border-stone-400 hover:bg-stone-100 transition-all font-semibold text-lg w-full sm:w-auto">
+                        <span data-lang-zh="了解隐私保护" data-lang-en="Learn About Privacy">了解隐私保护</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 隐私和数据安全区 -->
+    <section id="privacy" class="py-20 px-4 sm:px-6 lg:px-8 bg-white border-y border-stone-200">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" data-lang-zh="告诉你一个秘密：我是一位信息安全工程师" data-lang-en="Let me tell you a secret: I'm an Information Security Engineer">告诉你一个秘密：我是一位信息安全工程师</h2>
+                <p class="text-base text-stone-600 max-w-2xl mx-auto" data-lang-zh="这意味着：我充分尊重您的数据主权，并将用户隐私放在首位" data-lang-en="This means: I fully respect your data sovereignty and put user privacy first">这意味着：我充分尊重您的数据主权，并将用户隐私放在首位</p>
+            </div>
+
+            <!-- 隐私承诺网格 -->
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- 承诺 1 -->
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-lang-zh="本地优先" data-lang-en="Local First">本地优先</h3>
+                    <p class="text-stone-600" data-lang-zh="数据存储在您的设备上，您完全掌控" data-lang-en="Data stored on your device, you have complete control">数据存储在您的设备上，您完全掌控</p>
+                </div>
+
+                <!-- 承诺 2 -->
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-lang-zh="不用于任何AI训练" data-lang-en="Never Used for AI Training">不用于任何AI训练</h3>
+                    <p class="text-stone-600" data-lang-zh="您的数据永远不会被用于训练AI模型" data-lang-en="Your data will never be used to train AI models">您的数据永远不会被用于训练AI模型</p>
+                </div>
+
+                <!-- 承诺 3 -->
+                <div class="text-center p-6">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-lang-zh="端到端加密" data-lang-en="End-to-End Encrypted">端到端加密</h3>
+                    <p class="text-stone-600" data-lang-zh="数据传输全程加密，只有您能解密" data-lang-en="All data transmission is encrypted, only you can decrypt it">数据传输全程加密，只有您能解密</p>
+                </div>
+            </div>
+
+            <!-- 隐私政策链接 -->
+            <div class="text-center mt-12">
+                <a href="#" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-semibold text-lg group">
+                    <span data-lang-zh="查看完整隐私保护政策" data-lang-en="View Full Privacy Policy">查看完整隐私保护政策</span>
+                    <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 应用展示区 -->
+    <section id="apps" class="py-20 px-4 sm:px-6 lg:px-8 mt-16">
+        <div class="max-w-7xl mx-auto">
+            <!-- 区域标题 -->
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold" data-lang-zh="我开发的杂货铺" data-lang-en="My Toolbox">我开发的杂货铺</h2>
+            </div>
+
+            <!-- 应用卡片网格 -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- 应用卡片 1 -->
+                <div class="bg-white rounded-2xl p-8 border border-stone-200 hover:shadow-2xl hover:border-emerald-300 transition-all hover:-translate-y-2 flex flex-col">
+                    <!-- 图标 -->
+                    <div class="w-16 h-16 bg-gradient-to-br from-stone-200 to-stone-300 rounded-xl mb-6 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+
+                    <!-- 应用名称 -->
+                    <h3 class="text-xl font-bold mb-3" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</h3>
+
+                    <!-- 应用描述 -->
+                    <p class="text-stone-600 mb-6 flex-grow" data-lang-zh="一个免费的次卡计数器，永远记得还剩几次、还有多久。" data-lang-en="A free punch card counter that never forgets how many sessions are left and how much time remains.">一个免费的次卡计数器，永远记得还剩几次、还有多久。</p>
+
+                    <!-- 标签 -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-sm font-medium" data-lang-zh="生活工具" data-lang-en="Lifestyle">生活工具</span>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium" data-lang-zh="免费" data-lang-en="Free">免费</span>
+                    </div>
+
+                    <!-- 链接 -->
+                    <a href="product-1.html" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-semibold group">
+                        <span data-lang-zh="了解更多" data-lang-en="Learn More">了解更多</span>
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- 应用卡片 2 -->
+                <div class="bg-white rounded-2xl p-8 border border-stone-200 hover:shadow-2xl hover:border-emerald-300 transition-all hover:-translate-y-2 flex flex-col">
+                    <div class="w-16 h-16 bg-gradient-to-br from-stone-200 to-stone-300 rounded-xl mb-6 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-lang-zh="拾遗" data-lang-en="Shiyi">拾遗</h3>
+                    <p class="text-stone-600 mb-6 flex-grow" data-lang-zh="一个对碎片化信息进行存储、归纳和检索的脑外U盘。" data-lang-en="An external brain drive for storing, organizing and retrieving fragmented information.">一个对碎片化信息进行存储、归纳和检索的脑外U盘。</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-sm font-medium" data-lang-zh="知识管理" data-lang-en="Knowledge">知识管理</span>
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-sm font-medium">Pro</span>
+                    </div>
+                    <a href="product-2.html" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-semibold group">
+                        <span data-lang-zh="了解更多" data-lang-en="Learn More">了解更多</span>
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- 应用卡片 3 -->
+                <div class="bg-white rounded-2xl p-8 border border-stone-200 hover:shadow-2xl hover:border-emerald-300 transition-all hover:-translate-y-2 flex flex-col">
+                    <div class="w-16 h-16 bg-gradient-to-br from-stone-200 to-stone-300 rounded-xl mb-6 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-lang-zh="AskMe" data-lang-en="AskMe">AskMe</h3>
+                    <p class="text-stone-600 mb-6 flex-grow" data-lang-zh="这是一个一键启动的个人知识库开源项目。" data-lang-en="A one-click open-source personal knowledge base.">这是一个一键启动的个人知识库开源项目。</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-sm font-medium" data-lang-zh="开源项目" data-lang-en="Open Source">开源项目</span>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium" data-lang-zh="免费" data-lang-en="Free">免费</span>
+                    </div>
+                    <a href="product-3.html" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-semibold group">
+                        <span data-lang-zh="了解更多" data-lang-en="Learn More">了解更多</span>
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我区 -->
+    <section id="about" class="py-20 px-4 sm:px-6 lg:px-8 bg-stone-50">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 text-center" data-lang-zh="关于我" data-lang-en="About Me">关于我</h2>
+
+            <!-- 关于内容 -->
+            <div class="bg-white rounded-2xl p-8 sm:p-12 border border-stone-200">
+                <p class="text-xl text-stone-700 leading-relaxed mb-6" style="font-family: 'Long Cang', cursive;" data-lang-zh="我是一位信息安全工程师，也是一位独立的产品经理和开发者，当AI改变世界的时候，我也想参与其中。" data-lang-en="I'm an information security engineer, and an independent product manager and developer. As AI transforms the world, I want to be part of it.">
+                    我是一位信息安全工程师，也是一位独立的产品经理和开发者，当AI改变世界的时候，我也想参与其中。
+                </p>
+                <p class="text-xl text-stone-700 leading-relaxed mb-6" style="font-family: 'Long Cang', cursive;" data-lang-zh="如果说水瓶座有什么优点的话，那么思维跳跃点子多大抵算得上一个。我常常感慨，AI真的给了我这样人一双翅膀，可以快速的实现我脑子里这些天马行空的各种想法，在我40岁这个年龄，这是何其幸运的时代。" data-lang-en="If Aquarius has any strengths, it's probably the abundance of creative ideas. I often marvel at how AI has given someone like me wings to quickly bring my wild ideas to life. At 40, what a fortunate era this is.">
+                    如果说水瓶座有什么优点的话，那么思维跳跃点子多大抵算得上一个。我常常感慨，AI真的给了我这样人一双翅膀，可以快速的实现我脑子里这些天马行空的各种想法，在我40岁这个年龄，这是何其幸运的时代。
+                </p>
+                <p class="text-xl text-stone-700 leading-relaxed mb-8" style="font-family: 'Long Cang', cursive;" data-lang-zh="欲买桂花同载酒，终不似，少年游。我想，这也是我热爱生活的一种方式把。" data-lang-en="'Longing to buy osmanthus and wine together, yet it's not like the carefree days of youth.' I think this is also my way of loving life.">
+                    欲买桂花同载酒，终不似，少年游。我想，这也是我热爱生活的一种方式把。
+                </p>
+
+                <!-- 个人标签 -->
+                <div class="pt-6 border-t border-stone-200">
+                    <div class="flex flex-wrap gap-3 justify-center">
+                        <span class="px-5 py-2 bg-emerald-50 text-emerald-700 rounded-full text-base font-medium border border-emerald-200" data-lang-zh="奶爸" data-lang-en="Dad">奶爸</span>
+                        <span class="px-5 py-2 bg-orange-50 text-orange-700 rounded-full text-base font-medium border border-orange-200" data-lang-zh="篮球狂热者" data-lang-en="Basketball Enthusiast">篮球狂热者</span>
+                        <span class="px-5 py-2 bg-blue-50 text-blue-700 rounded-full text-base font-medium border border-blue-200" data-lang-zh="Luka粉丝" data-lang-en="Luka Fan">Luka粉丝</span>
+                        <span class="px-5 py-2 bg-stone-100 text-stone-700 rounded-full text-base font-medium border border-stone-300" data-lang-zh="主观脾气差" data-lang-en="Opinionated">主观脾气差</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系方式区 -->
+    <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8 bg-stone-900 text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6" data-lang-zh="联系我" data-lang-en="Get in Touch">联系我</h2>
+            <p class="text-xl text-stone-300 mb-8" data-lang-zh="有问题或合作意向？欢迎联系" data-lang-en="Have questions or collaboration ideas? Feel free to reach out">
+                有问题或合作意向？欢迎联系
+            </p>
+
+            <!-- 联系方式 -->
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-stone-800 rounded-xl p-6">
+                    <svg class="w-8 h-8 text-emerald-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <h3 class="font-semibold mb-2" data-lang-zh="邮箱" data-lang-en="Email">邮箱</h3>
+                    <a href="mailto:dev.stbei@gmail.com" class="text-stone-400 hover:text-emerald-500 transition-colors">dev.stbei@gmail.com</a>
+                </div>
+
+                <div class="bg-stone-800 rounded-xl p-6">
+                    <svg class="w-8 h-8 text-emerald-500 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <h3 class="font-semibold mb-2">GitHub</h3>
+                    <a href="https://github.com/devB2433" target="_blank" rel="noopener noreferrer" class="text-stone-400 hover:text-emerald-500 transition-colors">@devB2433</a>
+                </div>
+
+                <div class="bg-stone-800 rounded-xl p-6">
+                    <svg class="w-8 h-8 text-emerald-500 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                    <h3 class="font-semibold mb-2">LinkedIn</h3>
+                    <a href="https://www.linkedin.com/in/peter-bei/" target="_blank" rel="noopener noreferrer" class="text-stone-400 hover:text-emerald-500 transition-colors">Peter Bei</a>
+                </div>
+            </div>
+
+            <a href="mailto:dev.stbei@gmail.com" class="inline-block bg-emerald-600 text-white px-10 py-4 rounded-xl hover:bg-emerald-700 transition-all hover:-translate-y-1 hover:shadow-2xl font-semibold text-lg">
+                <span data-lang-zh="发送邮件" data-lang-en="Send Email">发送邮件</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-stone-950 text-stone-400 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">17737629 Canada Inc.</h3>
+                    <p class="text-sm" data-lang-zh="创新应用开发者" data-lang-en="Innovative App Developer">创新应用开发者</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="产品" data-lang-en="Products">产品</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#apps" class="hover:text-white transition-colors" data-lang-zh="所有产品" data-lang-en="All Products">所有产品</a></li>
+                        <li><a href="product-1.html" class="hover:text-white transition-colors" data-lang-zh="SwipeOff" data-lang-en="SwipeOff">SwipeOff</a></li>
+                        <li><a href="product-2.html" class="hover:text-white transition-colors" data-lang-zh="拾遗" data-lang-en="Shiyi">拾遗</a></li>
+                        <li><a href="product-3.html" class="hover:text-white transition-colors" data-lang-zh="AskMe" data-lang-en="AskMe">AskMe</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="资源" data-lang-en="Resources">资源</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="blog.html" class="hover:text-white transition-colors" data-lang-zh="文章" data-lang-en="Blog">文章</a></li>
+                        <li><a href="#privacy" class="hover:text-white transition-colors" data-lang-zh="隐私政策" data-lang-en="Privacy Policy">隐私政策</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4" data-lang-zh="联系" data-lang-en="Contact">联系</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#contact" class="hover:text-white transition-colors" data-lang-zh="联系我们" data-lang-en="Contact Us">联系我们</a></li>
+                        <li><a href="#about" class="hover:text-white transition-colors" data-lang-zh="关于我" data-lang-en="About Me">关于我</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-stone-800 pt-8 text-center text-sm">
+                <p>&copy; 2026 17737629 Canada Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 语言切换功能
+        let currentLang = localStorage.getItem('language') || 'en'; // 默认英文
+
+        // 切换语言函数
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+
+            // 更新所有带语言标记的元素
+            document.querySelectorAll('[data-lang-zh]').forEach(element => {
+                if (lang === 'zh') {
+                    element.textContent = element.getAttribute('data-lang-zh');
+                } else {
+                    element.textContent = element.getAttribute('data-lang-en');
+                }
+            });
+
+            // 更新开关状态 - 桌面端
+            document.getElementById('lang-zh').classList.toggle('active', lang === 'zh');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+
+            // 更新开关状态 - 移动端
+            document.getElementById('mobile-lang-zh').classList.toggle('active', lang === 'zh');
+            document.getElementById('mobile-lang-en').classList.toggle('active', lang === 'en');
+        }
+
+        // 页面加载时应用保存的语言
+        document.addEventListener('DOMContentLoaded', () => {
+            switchLanguage(currentLang);
+        });
+
+        // 桌面端 Product 下拉菜单
+        const desktopProductBtn = document.getElementById('desktop-product-btn');
+        const desktopProductMenu = document.getElementById('desktop-product-menu');
+        const desktopProductIcon = document.getElementById('desktop-product-icon');
+
+        desktopProductBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            desktopProductMenu.classList.toggle('hidden');
+            desktopProductIcon.classList.toggle('rotate-180');
+        });
+
+        // 点击页面其他地方关闭桌面端下拉菜单
+        document.addEventListener('click', (e) => {
+            if (!desktopProductBtn.contains(e.target) && !desktopProductMenu.contains(e.target)) {
+                desktopProductMenu.classList.add('hidden');
+                desktopProductIcon.classList.remove('rotate-180');
+            }
+        });
+
+        // 移动端主菜单切换
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 移动端 Product 子菜单切换
+        const mobileProductBtn = document.getElementById('mobile-product-btn');
+        const mobileProductMenu = document.getElementById('mobile-product-menu');
+        const mobileProductIcon = document.getElementById('mobile-product-icon');
+
+        mobileProductBtn.addEventListener('click', () => {
+            mobileProductMenu.classList.toggle('hidden');
+            mobileProductIcon.classList.toggle('rotate-180');
+        });
+
+        // 点击菜单链接后关闭移动端菜单
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    </script>
+
+</body>
+</html>
