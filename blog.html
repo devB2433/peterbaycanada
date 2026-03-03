@@ -33,17 +33,44 @@
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-        .text-stone-900 {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
         .glass-effect {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* 语言切换开关样式 */
+        .lang-switch {
+            position: relative;
+            display: inline-flex;
+            background-color: #f5f5f4;
+            border-radius: 26px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .lang-switch input {
+            display: none;
+        }
+
+        .lang-option {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #78716c;
+            user-select: none;
+        }
+
+        .lang-option.active {
+            background-color: #059669;
+            color: white;
+        }
+
+        .lang-option:hover:not(.active) {
+            color: #059669;
         }
     </style>
 </head>
@@ -63,13 +90,11 @@
 
                 <!-- 桌面端导航 -->
                 <div class="hidden md:flex items-center space-x-6">
-                    <!-- 语言切换按钮 -->
-                    <button id="lang-toggle" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
-                        </svg>
-                        <span id="lang-text">EN</span>
-                    </button>
+                    <!-- 语言切换开关 -->
+                    <div class="lang-switch">
+                        <span class="lang-option" id="lang-zh" onclick="switchLanguage('zh')">中</span>
+                        <span class="lang-option" id="lang-en" onclick="switchLanguage('en')">EN</span>
+                    </div>
 
                     <a href="index.html" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="首页" data-lang-en="Home">首页</a>
 
@@ -114,12 +139,11 @@
         <!-- 移动端菜单 -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-stone-200 bg-white">
             <div class="px-4 py-4 space-y-3">
-                <button id="mobile-lang-toggle" class="w-full text-left text-stone-600 font-medium flex items-center gap-2 py-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
-                    </svg>
-                    <span id="mobile-lang-text">EN</span>
-                </button>
+                <!-- 语言切换开关 -->
+                <div class="lang-switch">
+                    <span class="lang-option" id="mobile-lang-zh" onclick="switchLanguage('zh')">中</span>
+                    <span class="lang-option" id="mobile-lang-en" onclick="switchLanguage('en')">EN</span>
+                </div>
 
                 <a href="index.html" class="block text-stone-600 hover:text-stone-900 transition-colors font-medium py-2" data-lang-zh="首页" data-lang-en="Home">首页</a>
 
@@ -301,7 +325,7 @@
     <!-- JavaScript -->
     <script>
         // 语言切换功能
-        let currentLang = localStorage.getItem('language') || 'zh';
+        let currentLang = localStorage.getItem('language') || 'en';
 
         function switchLanguage(lang) {
             currentLang = lang;
@@ -315,20 +339,22 @@
                 }
             });
 
-            document.getElementById('lang-text').textContent = lang === 'zh' ? 'EN' : '中文';
-            document.getElementById('mobile-lang-text').textContent = lang === 'zh' ? 'EN' : '中文';
+            // 更新语言切换开关的激活状态
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.classList.remove('active');
+            });
+
+            if (lang === 'zh') {
+                document.getElementById('lang-zh')?.classList.add('active');
+                document.getElementById('mobile-lang-zh')?.classList.add('active');
+            } else {
+                document.getElementById('lang-en')?.classList.add('active');
+                document.getElementById('mobile-lang-en')?.classList.add('active');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             switchLanguage(currentLang);
-        });
-
-        document.getElementById('lang-toggle').addEventListener('click', () => {
-            switchLanguage(currentLang === 'zh' ? 'en' : 'zh');
-        });
-
-        document.getElementById('mobile-lang-toggle').addEventListener('click', () => {
-            switchLanguage(currentLang === 'zh' ? 'en' : 'zh');
         });
 
         // 桌面端 Product 下拉菜单
