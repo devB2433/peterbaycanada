@@ -10,7 +10,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-WEB_ROOT="/var/www/peterbaycanada"
+WEB_ROOT="/home/peterbaycanada"
 
 echo -e "${GREEN}=== Bay Tools 快速更新 ===${NC}"
 

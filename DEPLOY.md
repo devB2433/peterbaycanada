@@ -41,10 +41,10 @@ git push
 ssh root@your-vps-ip
 
 # 快速更新（推荐）
-sudo bash /var/www/peterbaycanada/update.sh
+sudo bash /home/peterbaycanada/update.sh
 
 # 或者手动更新
-cd /var/www/peterbaycanada && git pull
+cd /home/peterbaycanada && git pull
 ```
 
 #### 方式2：重新运行完整部署
@@ -69,13 +69,13 @@ sudo bash deploy.sh your-domain.com
 ## 目录结构
 
 ```
-/var/www/peterbaycanada/     # 网站根目录
-├── index.html               # 首页
-├── blog.html                # 博客页
-├── product-1.html           # 产品页1
-├── product-2.html           # 产品页2
-├── product-3.html           # 产品页3
-├── pbc_logo_green.png       # Logo
+/home/peterbaycanada/            # 网站根目录
+├── index.html                   # 首页
+├── blog.html                    # 博客页
+├── product-1.html               # 产品页1
+├── product-2.html               # 产品页2
+├── product-3.html               # 产品页3
+├── pbc_logo_green.png           # Logo
 └── ...
 ```
 
@@ -124,7 +124,7 @@ systemctl start certbot.timer    # 启动定时器
 
 运行SSL检查脚本：
 ```bash
-sudo bash /var/www/peterbaycanada/ssl-check.sh
+sudo bash /home/peterbaycanada/ssl-check.sh
 ```
 
 或手动检查：
@@ -217,7 +217,7 @@ sudo tail -f /var/log/nginx/peterbay_error.log
 2. 手动续期：`sudo certbot renew`
 
 ### Git更新失败
-1. 检查仓库状态：`cd /var/www/peterbaycanada && git status`
+1. 检查仓库状态：`cd /home/peterbaycanada && git status`
 2. 重置本地修改：`git reset --hard origin/main`
 3. 重新拉取：`git pull`
 

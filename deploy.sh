@@ -27,7 +27,7 @@ fi
 
 DOMAIN=$1
 REPO_URL="https://github.com/devB2433/peterbaycanada.git"
-WEB_ROOT="/var/www/peterbaycanada"
+WEB_ROOT="/home/peterbaycanada"
 NGINX_CONF="/etc/nginx/sites-available/peterbay"
 
 echo -e "${GREEN}=== Bay Tools 部署脚本 ===${NC}"
@@ -76,7 +76,7 @@ server {
     listen [::]:80;
     server_name DOMAIN_PLACEHOLDER;
 
-    root /var/www/peterbaycanada;
+    root /home/peterbaycanada;
     index index.html;
 
     # 日志
