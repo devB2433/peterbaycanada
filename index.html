@@ -148,7 +148,7 @@
                         <span class="lang-option" id="lang-en" onclick="switchLanguage('en')">EN</span>
                     </div>
 
-                    <a href="#home" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="首页" data-lang-en="Home">首页</a>
+                    <a href="#home" id="nav-home" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="首页" data-lang-en="Home">首页</a>
 
                     <!-- Product 下拉菜单 -->
                     <div class="relative">
@@ -175,9 +175,9 @@
                         </div>
                     </div>
 
-                    <a href="blog.html" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="文章" data-lang-en="Blog">文章</a>
-                    <a href="#about" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="关于" data-lang-en="About">关于</a>
-                    <a href="#contact" class="bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 transition-all text-sm font-semibold" data-lang-zh="联系" data-lang-en="Contact">联系</a>
+                    <a href="blog.html" id="nav-blog" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="文章" data-lang-en="Blog">文章</a>
+                    <a href="#about" id="nav-about" class="text-stone-600 hover:text-stone-900 transition-colors text-sm font-medium" data-lang-zh="关于" data-lang-en="About">关于</a>
+                    <a href="#contact" id="nav-contact" class="bg-emerald-600 text-white px-5 py-2 rounded-lg hover:bg-emerald-700 transition-all text-sm font-semibold" data-lang-zh="联系" data-lang-en="Contact">联系</a>
                 </div>
 
                 <!-- 移动端菜单按钮 -->
@@ -552,7 +552,44 @@
         // 页面加载时应用保存的语言
         document.addEventListener('DOMContentLoaded', () => {
             switchLanguage(currentLang);
+            highlightActiveSection();
         });
+
+        // 高亮当前section的导航项
+        function highlightActiveSection() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = {
+                'home': document.getElementById('nav-home'),
+                'about': document.getElementById('nav-about'),
+                'contact': document.getElementById('nav-contact')
+            };
+
+            // 监听滚动事件
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (window.pageYOffset >= sectionTop - 200) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                // 移除所有active状态
+                Object.values(navLinks).forEach(link => {
+                    if (link) {
+                        link.classList.remove('text-emerald-600');
+                        link.classList.add('text-stone-600');
+                    }
+                });
+
+                // 添加当前section的active状态
+                if (current && navLinks[current]) {
+                    navLinks[current].classList.remove('text-stone-600');
+                    navLinks[current].classList.add('text-emerald-600');
+                }
+            });
+        }
 
         // 桌面端 Product 下拉菜单
         const desktopProductBtn = document.getElementById('desktop-product-btn');
