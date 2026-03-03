@@ -98,15 +98,99 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-## SSL证书
+## SSL证书（自动化✅）
 
-- 证书提供商：Let's Encrypt
-- 自动续期：已配置（通过certbot.timer）
-- 证书位置：`/etc/letsencrypt/live/your-domain.com/`
+### 证书提供商
+- **Let's Encrypt**（免费、自动化、受信任）
+- 证书有效期：90天
+- 自动续期：到期前30天
 
-手动续期（通常不需要）：
+### 自动续期机制
+部署脚本已自动配置证书续期，**完全无需人工干预**：
+
+```bash
+# 系统会自动运行（已配置）
+systemctl enable certbot.timer   # 启用定时器
+systemctl start certbot.timer    # 启动定时器
+```
+
+**工作原理：**
+- 每天自动检查证书状态
+- 到期前30天自动续期
+- 续期成功后自动重载Nginx
+- 失败时会记录到系统日志
+
+### 检查SSL状态
+
+运行SSL检查脚本：
+```bash
+sudo bash /var/www/peterbaycanada/ssl-check.sh
+```
+
+或手动检查：
+
+**1. 查看证书信息**
+```bash
+sudo certbot certificates
+```
+
+**2. 查看自动续期状态**
+```bash
+sudo systemctl status certbot.timer
+```
+
+**3. 查看下次检查时间**
+```bash
+sudo systemctl list-timers certbot.timer
+```
+
+**4. 测试续期配置（不会真的续期）**
+```bash
+sudo certbot renew --dry-run
+```
+看到 "Congratulations, all simulated renewals succeeded" 说明配置正确。
+
+### 证书文件位置
+```
+/etc/letsencrypt/live/your-domain.com/
+├── fullchain.pem    # 完整证书链
+├── privkey.pem      # 私钥
+├── cert.pem         # 证书
+└── chain.pem        # 中间证书
+```
+
+### 手动操作（通常不需要）
+
+**手动续期：**
 ```bash
 sudo certbot renew
+```
+
+**强制续期（即使未到期）：**
+```bash
+sudo certbot renew --force-renewal
+```
+
+**查看续期日志：**
+```bash
+sudo journalctl -u certbot.timer
+```
+
+### 常见问题
+
+**Q: 证书会过期吗？**
+A: 不会。自动续期已配置，系统会在到期前30天自动续期。
+
+**Q: 如何知道续期是否成功？**
+A: 运行 `sudo certbot certificates` 查看到期时间，或查看日志 `sudo journalctl -u certbot.timer`
+
+**Q: 更换域名怎么办？**
+A: 重新运行 `sudo bash deploy.sh new-domain.com`
+
+**Q: 支持多个域名吗？**
+A: 支持。修改deploy.sh中的certbot命令：
+```bash
+certbot --nginx -d domain1.com -d www.domain1.com -d domain2.com
 ```
 
 ## 日志查看
